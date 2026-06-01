@@ -21,6 +21,29 @@ export function formatCompactNumber(value: number): string {
   }).format(value);
 }
 
+export function formatDate(value: string | Date): string {
+  const date = typeof value === 'string' ? new Date(value) : value;
+  return new Intl.DateTimeFormat('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  }).format(date);
+}
+
+export function formatRelativeTime(value: string | Date): string {
+  const date = typeof value === 'string' ? new Date(value) : value;
+  const diffMs = Date.now() - date.getTime();
+  const diffSec = Math.floor(diffMs / 1000);
+  if (diffSec < 60) return 'just now';
+  const diffMin = Math.floor(diffSec / 60);
+  if (diffMin < 60) return `${diffMin}m ago`;
+  const diffHr = Math.floor(diffMin / 60);
+  if (diffHr < 24) return `${diffHr}h ago`;
+  const diffDay = Math.floor(diffHr / 24);
+  if (diffDay < 7) return `${diffDay}d ago`;
+  return formatDate(date);
+}
+
 export function getInitials(name: string): string {
   return name
     .split(/\s+/)

@@ -16,10 +16,10 @@ const buttonVariants = cva(
           'bg-destructive text-white shadow-sm hover:bg-[color-mix(in_srgb,var(--destructive)_88%,#000)]',
       },
       size: {
-        default: 'h-10 px-4 py-2 rounded-[var(--radius-lg)]',
+        default: 'h-10 px-4 py-2 rounded-[var(--radius-md)]',
         sm: 'h-9 px-3 rounded-[var(--radius-md)]',
-        lg: 'h-11 px-8 rounded-[var(--radius-lg)]',
-        icon: 'h-10 w-10 rounded-[var(--radius-lg)]',
+        lg: 'h-11 px-8 rounded-[var(--radius-md)]',
+        icon: 'h-10 w-10 rounded-[var(--radius-md)]',
       },
     },
     defaultVariants: {

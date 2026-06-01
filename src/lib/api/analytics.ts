@@ -61,9 +61,10 @@ export async function getDashboardOverviewData(): Promise<DashboardOverviewData>
       getRiskIndicators(),
     ]);
 
-  const unwrap = <T>(result: PromiseSettledResult<T>, label: string): T | null => {
+  const unwrap = <T,>(result: PromiseSettledResult<T>, label: string): T | null => {
     if (result.status === 'fulfilled') return result.value;
-    errors.push(`${label}: ${result.reason?.message ?? 'Failed to load'}`);
+    const reason = result.reason as { message?: string } | undefined;
+    errors.push(`${label}: ${reason?.message ?? 'Failed to load'}`);
     return null;
   };
 

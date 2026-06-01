@@ -5,48 +5,76 @@ import { usePathname } from 'next/navigation';
 import {
   LayoutDashboard,
   Store,
-  Tags,
+  Users,
   Wallet,
   CreditCard,
-  AlertTriangle,
   HeadphonesIcon,
   Settings,
   ChevronLeft,
   ChevronRight,
+  ShoppingBag,
+  ShieldAlert,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useState } from 'react';
 
-const navSections = [
+type NavItem = {
+  href: string;
+  label: string;
+  icon: typeof LayoutDashboard;
+  disabled?: boolean;
+  badgeCount?: number;
+};
+
+const navSections: Array<{
+  label: string;
+  items: NavItem[];
+}> = [
   {
     label: 'Overview',
     items: [{ href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard }],
   },
   {
-    label: 'Operations',
+    label: 'Management',
     items: [
-      { href: '/vendors', label: 'Vendors', icon: Store, disabled: true },
-      { href: '/categories', label: 'Categories', icon: Tags, disabled: true },
-      { href: '/support', label: 'Support', icon: HeadphonesIcon, disabled: true },
+      { href: '/users', label: 'Users', icon: Users },
+      { href: '/vendors', label: 'Vendors', icon: Store },
+      { href: '/orders', label: 'Orders', icon: ShoppingBag, disabled: true },
     ],
   },
   {
     label: 'Finance',
     items: [
-      { href: '/finance', label: 'Finance', icon: Wallet, disabled: true },
-      { href: '/payouts', label: 'Payouts', icon: CreditCard, disabled: true },
-      { href: '/disputes', label: 'Disputes', icon: AlertTriangle, disabled: true },
+      { href: '/finance', label: 'Payments', icon: Wallet },
+      { href: '/payouts', label: 'Payouts & Refunds', icon: CreditCard },
+      { href: '/refunds', label: 'Refunds & Disputes', icon: ShieldAlert },
     ],
   },
   {
     label: 'System',
-    items: [{ href: '/settings', label: 'Settings', icon: Settings, disabled: true }],
+    items: [
+      { href: '/support', label: 'Support', icon: HeadphonesIcon, disabled: true },
+      { href: '/settings', label: 'Settings', icon: Settings, disabled: true },
+    ],
   },
 ];
 
-export function AdminSidebar() {
+interface AdminSidebarProps {
+  ordersBadgeCount?: number;
+}
+
+export function AdminSidebar({ ordersBadgeCount }: AdminSidebarProps) {
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
+
+  const sections = navSections.map((section) => ({
+    ...section,
+    items: section.items.map((item) =>
+      item.href === '/orders' && ordersBadgeCount !== undefined && ordersBadgeCount > 0
+        ? { ...item, badgeCount: ordersBadgeCount }
+        : item
+    ),
+  }));
 
   return (
     <aside
@@ -56,7 +84,7 @@ export function AdminSidebar() {
       )}
     >
       <div className="flex h-16 items-center gap-3 border-b border-border px-4">
-        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[var(--radius-lg)] bg-primary text-primary-foreground shadow-sm">
+        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[var(--radius-md)] bg-primary text-primary-foreground shadow-sm">
           <span className="text-xs font-bold">P</span>
         </div>
         {!collapsed && (
@@ -68,7 +96,7 @@ export function AdminSidebar() {
       </div>
 
       <nav className="dashboard-scroll flex-1 space-y-6 overflow-y-auto p-3">
-        {navSections.map((section) => (
+        {sections.map((section) => (
           <div key={section.label}>
             {!collapsed && (
               <p className="mb-2 px-3 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
@@ -76,27 +104,31 @@ export function AdminSidebar() {
               </p>
             )}
             <ul className="space-y-0.5">
-              {section.items.map(({ href, label, icon: Icon, disabled }) => {
+              {section.items.map(({ href, label, icon: Icon, disabled, badgeCount }) => {
                 const active = pathname === href || pathname.startsWith(`${href}/`);
+
+                const className = cn(
+                  'sidebar-nav-item',
+                  active && 'is-active',
+                  disabled && 'is-disabled',
+                  collapsed && 'justify-center px-2'
+                );
+
                 const content = (
                   <>
                     <Icon className="h-4 w-4 shrink-0" aria-hidden />
                     {!collapsed && <span className="truncate">{label}</span>}
-                    {!collapsed && disabled && (
+                    {!collapsed && badgeCount !== undefined && badgeCount > 0 && (
+                      <span className="badge-warning" aria-label={`${badgeCount} pending orders`}>
+                        {badgeCount}
+                      </span>
+                    )}
+                    {!collapsed && disabled && !badgeCount && (
                       <span className="ml-auto rounded-[var(--radius-sm)] bg-muted px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground">
                         Soon
                       </span>
                     )}
                   </>
-                );
-
-                const className = cn(
-                  'flex w-full items-center gap-3 rounded-[var(--radius-lg)] px-3 py-2 text-sm font-medium transition-colors',
-                  active
-                    ? 'bg-sidebar-primary text-sidebar-primary-foreground shadow-sm'
-                    : 'text-muted-foreground hover:bg-card hover:text-foreground',
-                  disabled && 'cursor-not-allowed opacity-60 hover:bg-transparent hover:text-muted-foreground',
-                  collapsed && 'justify-center px-2'
                 );
 
                 return (
@@ -118,11 +150,20 @@ export function AdminSidebar() {
         ))}
       </nav>
 
+      {!collapsed && (
+        <div className="mx-3 mb-3 rounded-[var(--radius-md)] border border-border bg-muted/50 p-3">
+          <p className="text-xs font-medium text-foreground">Need help?</p>
+          <p className="mt-1 text-[11px] text-muted-foreground">
+            Review Partylist admin documentation for vendor workflows.
+          </p>
+        </div>
+      )}
+
       <div className="border-t border-border p-3">
         <button
           type="button"
           onClick={() => setCollapsed((v) => !v)}
-          className="flex w-full items-center justify-center gap-2 rounded-[var(--radius-lg)] px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-card hover:text-foreground"
+          className="sidebar-nav-item justify-center"
           aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
         >
           {collapsed ? (

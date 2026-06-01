@@ -1,55 +1,45 @@
-import { Bell, Search } from 'lucide-react';
+import { Search } from 'lucide-react';
 import { LogoutButton } from '@/components/auth/logout-button';
 import { Input } from '@/components/ui/input';
+import { getInitials } from '@/lib/format';
 
 interface AdminTopHeaderProps {
   email?: string | null;
-  title?: string;
-  description?: string;
 }
 
-export function AdminTopHeader({
-  email,
-  title = 'Dashboard',
-  description = 'Platform overview and key metrics',
-}: AdminTopHeaderProps) {
+export function AdminTopHeader({ email }: AdminTopHeaderProps) {
+  const displayName = email?.split('@')[0] ?? 'Admin';
+  const roleLabel = 'Admin';
+
   return (
     <header className="sticky top-0 z-30 border-b border-border bg-card/95 backdrop-blur-md">
-      <div className="flex h-16 items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
-        <div className="min-w-0">
-          <h1 className="truncate text-lg font-semibold tracking-tight text-foreground">
-            {title}
-          </h1>
-          <p className="hidden truncate text-xs text-muted-foreground sm:block">
-            {description}
-          </p>
+      <div className="flex h-16 items-center gap-4 px-4 sm:px-6 lg:px-8">
+        <div className="relative hidden min-w-0 flex-1 md:block">
+          <Search
+            className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"
+            aria-hidden
+          />
+          <Input
+            type="search"
+            placeholder="Search users, vendors, orders..."
+            className="h-9 pl-9"
+            aria-label="Global search"
+            disabled
+          />
         </div>
 
-        <div className="flex items-center gap-2 sm:gap-3">
-          <div className="relative hidden md:block">
-            <Search
-              className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"
-              aria-hidden
-            />
-            <Input
-              type="search"
-              placeholder="Search..."
-              className="h-9 w-56 pl-9"
-              aria-label="Search admin"
-              disabled
-            />
+        <div className="ml-auto flex items-center gap-3">
+          <div className="hidden items-center gap-2 sm:flex">
+            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-secondary text-xs font-semibold text-secondary-foreground">
+              {getInitials(displayName)}
+            </div>
+            <div className="min-w-0 text-right">
+              <p className="truncate text-sm font-medium capitalize text-foreground">
+                {displayName}
+              </p>
+              <p className="truncate text-xs text-muted-foreground">{roleLabel}</p>
+            </div>
           </div>
-
-          <button
-            type="button"
-            className="relative flex h-9 w-9 items-center justify-center rounded-[var(--radius-lg)] border border-border bg-card text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-            aria-label="Notifications"
-            disabled
-          >
-            <Bell className="h-4 w-4" aria-hidden />
-            <span className="absolute right-2 top-2 h-1.5 w-1.5 rounded-full bg-primary" aria-hidden />
-          </button>
-
           <LogoutButton email={email} />
         </div>
       </div>
