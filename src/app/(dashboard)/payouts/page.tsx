@@ -43,7 +43,7 @@ export default async function PayoutsPage({ searchParams }: PayoutsPageProps) {
     loadError =
       error instanceof Error
         ? error.message
-        : 'Could not load payout data from the API. Is the backend running on port 3002?';
+        : 'Could not load payout data from the API.';
   }
 
   return (

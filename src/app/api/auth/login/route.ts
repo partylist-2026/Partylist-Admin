@@ -50,7 +50,7 @@ export async function POST(request: Request) {
 
     const message =
       error instanceof TypeError && error.message.includes('fetch')
-        ? 'Cannot reach the backend API. Check that Partylist-Backend is running and API_URL in admin/.env.local matches its PORT.'
+        ? 'Cannot reach the backend API. Check API_URL in admin/.env.local (https://api.usepartylist.com).'
         : 'Unable to sign in. Please try again.';
 
     return NextResponse.json({ error: message }, { status: 500 });

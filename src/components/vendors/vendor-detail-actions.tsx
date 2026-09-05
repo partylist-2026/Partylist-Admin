@@ -90,7 +90,7 @@ export function VendorDetailActions({ vendor }: VendorDetailActionsProps) {
     setImpersonationToken(token);
 
     const vendorAppUrl =
-      process.env.NEXT_PUBLIC_VENDOR_APP_URL ?? 'https://partylist-vendor.vercel.app';
+      process.env.NEXT_PUBLIC_VENDOR_APP_URL ?? 'https://vendor.usepartylist.com';
     const url = new URL('/login', vendorAppUrl);
     url.searchParams.set('impersonationToken', token);
     url.searchParams.set('expiresAt', body.data.expiresAt);

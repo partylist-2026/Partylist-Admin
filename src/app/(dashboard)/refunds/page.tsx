@@ -60,7 +60,7 @@ export default async function RefundsPage({ searchParams }: RefundsPageProps) {
     loadError =
       error instanceof Error
         ? error.message
-        : 'Could not load disputes dashboard from API. Ensure backend is running on port 3002.';
+        : 'Could not load disputes dashboard from the API.';
   }
 
   return (

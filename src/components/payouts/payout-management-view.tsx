@@ -305,7 +305,7 @@ export function PayoutManagementView({
         >
           <strong>Could not load payout data:</strong> {loadError}
           <span className="mt-1 block text-xs opacity-90">
-            Data comes from Partylist API (<code className="text-xs">localhost:3002</code>
+            Data comes from Partylist API (<code className="text-xs">https://api.usepartylist.com</code>
             ), not this HTML page. In Network, check{' '}
             <code className="text-xs">dashboard?page=1</code> — not the document named{' '}
             <code className="text-xs">payouts</code>.
